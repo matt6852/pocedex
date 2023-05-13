@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPokemons, fetchPokemonsByType, fetchTypes, searchPokemonByName } from "./service/pokemonsService";
 import { changeLimit, changePage, selectedPokemon, onSearch } from "./features/pokemonsSlice";
 
-
 const TableFooter: React.FC<any> = ({ paginationProps, }) => {
   return (
     <Row justify='space-between'>
@@ -19,7 +18,18 @@ const AntTable: React.FC<any> = (
 ) => {
   const dispath = useDispatch()
 
-  const { count, results, currentPage, offset, limit, loading, types, selected, serchTerm, error } = useSelector((state: any) => state.pokemons)
+  const {
+    count,
+    results,
+    currentPage,
+    offset,
+    limit,
+    loading,
+    types,
+    selected,
+    serchTerm,
+    error
+  } = useSelector((state: any) => state.pokemons)
 
   const [isSearchMod, setIsSeacrhMod] = useState(false)
   const FilterByNameInput = (
@@ -33,13 +43,10 @@ const AntTable: React.FC<any> = (
             setIsSeacrhMod(true)
             //@ts-ignore
             dispath(onSearch(currValue))
-
           }
           else {
             setIsSeacrhMod(false)
-
           }
-
         }}
       />
     </>
@@ -49,7 +56,11 @@ const AntTable: React.FC<any> = (
 
   const onChange = (value: string) => {
     if (value.length) {
-      const id = value[value.length - 1][value[0].length - 2]
+      console.log(value);
+
+
+      const id = value[value.length - 1].slice(30,).replace(/[^0-9]/g, '')
+      console.log(id)
       setIsSeacrhMod(true)
       //@ts-ignore
       dispath(fetchPokemonsByType(id))
@@ -168,7 +179,6 @@ const AntTable: React.FC<any> = (
     onShowSizeChange: (current: number, pageSize: number) => {
       dispath(changeLimit(pageSize))
     },
-
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -190,11 +200,9 @@ const AntTable: React.FC<any> = (
             How looks: <Image src={selected.info.sprites.back_default} />
           </div>
           <div>
-
             Abilities: {selected.info.abilities?.map((a: any) => <p key={a?.ability?.name}>{a?.ability?.name}</p>)}
           </div>
         </>}
-
       </Modal>
       <Table
         loading={loading}
