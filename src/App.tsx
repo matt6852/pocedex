@@ -164,9 +164,9 @@ const AntTable: React.FC<any> = (
       dispath(changePage(page))
     },
     showSizeChanger: true,
+    //@ts-ignore
     onShowSizeChange: (current: number, pageSize: number) => {
       dispath(changeLimit(pageSize))
-
     },
     locale: {
       jump_to: "выбрать",
