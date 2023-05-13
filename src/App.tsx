@@ -56,11 +56,7 @@ const AntTable: React.FC<any> = (
 
   const onChange = (value: string) => {
     if (value.length) {
-      console.log(value);
-
-
       const id = value[value.length - 1].slice(30,).replace(/[^0-9]/g, '')
-      console.log(id)
       setIsSeacrhMod(true)
       //@ts-ignore
       dispath(fetchPokemonsByType(id))
