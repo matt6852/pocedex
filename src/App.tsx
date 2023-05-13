@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Row, Pagination, Tag, Image, Input, Select, Modal, } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPokemons, fetchPokemonsByType, fetchTypes, searchPokemonByName } from "./service/pokemonsService";
-import { changeLimit, changePage, selectedPokemon } from "./features/pokemonsSlice";
+import { changeLimit, changePage, selectedPokemon, onSearch } from "./features/pokemonsSlice";
 
 
 const TableFooter: React.FC<any> = ({ paginationProps, }) => {
@@ -19,7 +19,7 @@ const AntTable: React.FC<any> = (
 ) => {
   const dispath = useDispatch()
 
-  const { count, results, currentPage, offset, limit, loading, types, selected } = useSelector((state: any) => state.pokemons)
+  const { count, results, currentPage, offset, limit, loading, types, selected, serchTerm, error } = useSelector((state: any) => state.pokemons)
 
   const [isSearchMod, setIsSeacrhMod] = useState(false)
   const FilterByNameInput = (
@@ -29,13 +29,15 @@ const AntTable: React.FC<any> = (
         placeholder="Search Name"
         onChange={e => {
           const currValue = e.target.value;
-          if (currValue) {
+          if (currValue?.trim()) {
             setIsSeacrhMod(true)
             //@ts-ignore
-            dispath(searchPokemonByName(currValue))
+            dispath(onSearch(currValue))
+
           }
           else {
             setIsSeacrhMod(false)
+
           }
 
         }}
@@ -46,7 +48,6 @@ const AntTable: React.FC<any> = (
 
 
   const onChange = (value: string) => {
-    console.log(value);
     if (value.length) {
       const id = value[value.length - 1][value[0].length - 2]
       setIsSeacrhMod(true)
@@ -97,12 +98,24 @@ const AntTable: React.FC<any> = (
       //@ts-ignore
       dispath(fetchPokemons({ offset, limit }))
     }
-  }, [currentPage, limit, isSearchMod])
+  }, [currentPage, limit, isSearchMod,])
   useEffect(() => {
     //@ts-ignore
     dispath(fetchTypes())
 
   }, [])
+  useEffect(() => {
+    if (serchTerm) {
+      //@ts-ignore
+      dispath(searchPokemonByName(serchTerm))
+    } if (!serchTerm && error) {
+      //@ts-ignore
+      dispath(fetchPokemons({ offset, limit }))
+    }
+
+
+  }, [serchTerm])
+
 
   const columns = [
     {
@@ -152,7 +165,6 @@ const AntTable: React.FC<any> = (
     },
     showSizeChanger: true,
     onShowSizeChange: (current: number, pageSize: number) => {
-      console.log(current, pageSize);
       dispath(changeLimit(pageSize))
 
     },
@@ -173,6 +185,7 @@ const AntTable: React.FC<any> = (
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   return (
     <>
       <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
@@ -182,7 +195,7 @@ const AntTable: React.FC<any> = (
           </div>
           <div>
 
-            Abilities: {selected.info.abilities.map((a: any) => <p key={a?.ability?.name}>{a?.ability?.name}</p>)}
+            Abilities: {selected.info.abilities?.map((a: any) => <p key={a?.ability?.name}>{a?.ability?.name}</p>)}
           </div>
         </>}
 
@@ -193,7 +206,6 @@ const AntTable: React.FC<any> = (
           return {
             onClick: () => {
               setIsModalOpen(true);
-              console.log(record);
               dispath(selectedPokemon(record))
             },
           };

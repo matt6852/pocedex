@@ -27,6 +27,9 @@ const pokemonsSlice =createSlice({
   },
   selectedPokemon(state,action){
    state.selected = action.payload
+  },
+  onSearch(state,action){
+   state.serchTerm = action.payload
   }
  },
  extraReducers(builder){
@@ -68,11 +71,17 @@ const pokemonsSlice =createSlice({
   builder.addCase(fetchPokemonsByType.fulfilled,(state,action)=>{
    state.loading = false
    state.count = action.payload.count
+   state.currentPage =1
+   state.offset =0
+   state.limit = 10
       //@ts-ignore
    state.results = action.payload.results
   })
   builder.addCase(searchPokemonByName.fulfilled,(state,action)=>{
+   console.log(action);
+   
    state.loading = false
+      //@ts-ignore
    state.count = action.payload.count
    state.currentPage =1
    state.offset =0
@@ -85,15 +94,17 @@ const pokemonsSlice =createSlice({
   
   })
   builder.addCase(searchPokemonByName.rejected,(state,action)=>{
+   console.log(action);
    state.count = 0
    state.results = []
    state.currentPage =1
    state.offset =0
    state.limit = 10
+   state.serchTerm = ""
       //@ts-ignore
-   state.error = action.payload  
+   state.error = action.error.message 
   })
  }
 })
- export const {changePage,changeLimit,selectedPokemon} = pokemonsSlice.actions
+ export const {changePage,changeLimit,selectedPokemon,onSearch} = pokemonsSlice.actions
 export default pokemonsSlice.reducer
