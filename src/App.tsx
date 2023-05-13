@@ -168,11 +168,7 @@ const AntTable: React.FC<any> = (
     onShowSizeChange: (current: number, pageSize: number) => {
       dispath(changeLimit(pageSize))
     },
-    locale: {
-      jump_to: "выбрать",
-      page: "страницу",
-    },
-    showQuickJumper: 1 > 1000,
+
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
