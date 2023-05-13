@@ -78,7 +78,6 @@ const pokemonsSlice =createSlice({
    state.results = action.payload.results
   })
   builder.addCase(searchPokemonByName.fulfilled,(state,action)=>{
-   console.log(action);
    
    state.loading = false
       //@ts-ignore
@@ -94,7 +93,6 @@ const pokemonsSlice =createSlice({
   
   })
   builder.addCase(searchPokemonByName.rejected,(state,action)=>{
-   console.log(action);
    state.count = 0
    state.results = []
    state.currentPage =1
